@@ -1,3 +1,10 @@
+# Important
+This project uses `git lfs`.
+You will need to:
+- clone this repository
+- change dir to repo dir
+- `git lfs pull`
+
 # Startup Guide
 
 ```
