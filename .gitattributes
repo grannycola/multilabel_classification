@@ -4,3 +4,6 @@
 # .ipynb ignore in statistics
 notebooks/* linguist-vendored
 *.ipynb linguist-vendored
+
+
+*.pth filter=lfs diff=lfs merge=lfs -text
