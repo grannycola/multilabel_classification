@@ -8,4 +8,4 @@ eval:
 	cd src/cli && python3 test_cli_commands.py $(ARGS);
 
 mlflow:
-	mlflow ui --backend-store-uri reports/mlruns;
+	mlflow ui --backend-store-uri reports/mlruns/;

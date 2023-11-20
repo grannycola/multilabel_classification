@@ -1,0 +1,15 @@
+artifact_uri: /home/yaroslav/Документы/multilabel_classification/src/cli/../../reports/mlruns/0/e249a7ec1d1b425c915514a7f62c02b2/artifacts
+end_time: 1700483436846
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e249a7ec1d1b425c915514a7f62c02b2
+run_name: sassy-chimp-357
+run_uuid: e249a7ec1d1b425c915514a7f62c02b2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1700483319063
+status: 3
+tags: []
+user_id: yaroslav

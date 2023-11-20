@@ -2,8 +2,6 @@ data/batch_*
 data/raw/images/
 models/output/logs/
 *.pdf
-reports/
-mlruns/
 .trash/
 
 # Byte-compiled / optimized / DLL files
