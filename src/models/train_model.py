@@ -54,11 +54,11 @@ def train_model(model_path: str,
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
-    # model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
+    model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
+    model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 
-    model = models.swin_b(weights=models.Swin_B_Weights.DEFAULT)
-    model.head = torch.nn.Linear(1024, num_classes)
+    # model = models.swin_b(weights=models.Swin_B_Weights.DEFAULT)
+    # model.head = torch.nn.Linear(1024, num_classes)
 
     if model_path:
         model = torch.load(model_path)
