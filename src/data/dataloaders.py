@@ -1,12 +1,12 @@
 import os
 import numpy as np
-import albumentations as A
+
 import torch
 import yaml
 
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader, random_split
-from albumentations.pytorch import ToTensorV2
+from src.data.transformations import get_transform, get_val_transform
 
 torch.manual_seed(42)
 
@@ -18,28 +18,33 @@ def get_default_from_yaml(param_name):
     return default_value
 
 
-def get_transform():
-    transform = [
-        A.PadIfNeeded(min_height=224, min_width=224, border_mode=0),
-        A.Resize(height=224, width=224),
-        A.Normalize(),
-        A.HorizontalFlip(p=0.5),
-        A.VerticalFlip(p=0.5),
-        A.Perspective(scale=(0.05, 0.1), p=0.5),
-        A.RandomBrightnessContrast(p=0.3),
-        ToTensorV2(),
-    ]
-    return A.Compose(transform)
+# Evaluate class disbalance to obtain inverse weights
+def evaluate_disbalance(dataloader):
+    total_samples = len(dataloader.dataset)
+    class_frequencies = torch.zeros(3)
+
+    for data_batch, labels_batch in dataloader:
+        class_frequencies += labels_batch.sum(dim=0)
+
+    class_weights = total_samples / (class_frequencies + 1e-10)
+    return torch.Tensor(class_weights)
 
 
-def get_val_transform():
-    transform = [
-        A.PadIfNeeded(min_height=224, min_width=224, border_mode=0),
-        A.Resize(height=224, width=224),
-        A.Normalize(),
-        ToTensorV2(),
-    ]
-    return A.Compose(transform)
+class SubsetTransformation(Dataset):
+    def __init__(self, subset, transform=None):
+        self.subset = subset
+        self.transform = transform
+
+    def __getitem__(self, index):
+        image, labels = self.subset[index]
+        image = np.asarray(image).astype(np.uint8)
+        if self.transform:
+            transformed = self.transform(image=image)
+            image = transformed(image)
+        return image, labels
+
+    def __len__(self):
+        return len(self.subset)
 
 
 class CustomDataset(Dataset):
@@ -69,18 +74,6 @@ class CustomDataset(Dataset):
         return image, labels
 
 
-# Evaluate class disbalance to obtain inverse weights
-def evaluate_disbalance(dataloader):
-    total_samples = len(dataloader.dataset)
-    class_frequencies = torch.zeros(3)
-
-    for data_batch, labels_batch in dataloader:
-        class_frequencies += labels_batch.sum(dim=0)
-
-    class_weights = total_samples / (class_frequencies + 1e-10)
-    return torch.Tensor(class_weights)
-
-
 def create_dataloaders(image_dir=None,
                        batch_size=None,
                        num_classes=None,
@@ -100,6 +93,9 @@ def create_dataloaders(image_dir=None,
 
     train_dataset, test_val_dataset = random_split(dataset, [train_size, test_size + val_size])
     test_dataset, val_dataset = random_split(test_val_dataset, [test_size, val_size])
+
+    val_dataset.dataset.transform = get_val_transform()
+    test_dataset.dataset.transform = get_val_transform()
 
     train_dataloader = DataLoader(train_dataset,
                                   batch_size=batch_size,

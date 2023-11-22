@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 from torchmetrics.classification import MultilabelF1Score
-from src.models.custom_dataset import create_dataloaders
+from src.data.dataloaders import create_dataloaders
 
 
 def eval_model(model_path: str,
