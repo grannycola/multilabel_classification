@@ -3,11 +3,11 @@ data/raw/images/
 models/output/logs/
 *.pdf
 .trash/
+mlruns/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
 # C extensions
 *.so
 
